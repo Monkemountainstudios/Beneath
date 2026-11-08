@@ -19,7 +19,7 @@ jobs:
           - os: windows-latest
             name: Windows x64
             archive: Beneath-v1.0.0-Windows-x64.zip
-          - os: macos-14
+          - os: macos-latest
             name: macOS Universal
             archive: Beneath-v1.0.0-macOS-universal.zip
 
