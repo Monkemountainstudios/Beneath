@@ -2,7 +2,7 @@
 
 ![Beneath logo](Assets/beneath_logo.png)
 
-Beneath is a playable underwater acoustic environment by **Monke Mountain Studios**. It places any incoming sound inside a small geometric world of distance, depth, moving water, surface reflections and a material seabed. Feed it an instrument, field recording, voice or complete mix and explore rather than hunt through presets—Beneath intentionally ships without factory presets.
+Beneath is a playable underwater acoustic environment by **MonkeMountainStudios**. It places any incoming sound inside a small geometric world of distance, depth, moving water, surface reflections and a material seabed. Feed it an instrument, field recording, voice or complete mix and explore rather than hunt through presets—Beneath intentionally ships without factory presets.
 
 ## Playing the aquarium
 
@@ -49,7 +49,7 @@ ctest --test-dir build -C Release --output-on-failure
 
 ## Credits
 
-- Concept, art direction, sound design, testing and final tuning: **Monke Mountain Studios**
+- Concept, art direction, sound design, testing and final tuning: **MonkeMountainStudios**
 - DSP, interface and engineering collaboration: **OpenAI Codex** and **Astra**
 - Audio application and plugin framework: **JUCE**
 
