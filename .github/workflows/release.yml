@@ -1,0 +1,130 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build ${{ matrix.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            name: Windows x64
+            archive: Beneath-v1.0.0-Windows-x64.zip
+          - os: macos-14
+            name: macOS Universal
+            archive: Beneath-v1.0.0-macOS-universal.zip
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Check out Beneath
+        uses: actions/checkout@v4
+
+      - name: Check out JUCE 9.0.1
+        uses: actions/checkout@v4
+        with:
+          repository: juce-framework/JUCE
+          ref: 9.0.1
+          path: JUCE
+
+      - name: Configure MSVC
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Configure Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: >-
+          cmake -S . -B build-ci -G Ninja
+          -DCMAKE_BUILD_TYPE=Release
+          -DBENEATH_JUCE_SOURCE_DIR="${{ github.workspace }}/JUCE"
+
+      - name: Configure macOS Universal
+        if: runner.os == 'macOS'
+        run: >-
+          cmake -S . -B build-ci -G Ninja
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
+          -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0
+          -DBENEATH_JUCE_SOURCE_DIR="${{ github.workspace }}/JUCE"
+
+      - name: Build and test Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          cmake --build build-ci --config Release --target BeneathDspTests Beneath_Standalone Beneath_VST3 -j 4
+          ctest --test-dir build-ci -C Release --output-on-failure
+
+      - name: Build and test macOS
+        if: runner.os == 'macOS'
+        run: |
+          cmake --build build-ci --config Release --target BeneathDspTests Beneath_Standalone Beneath_VST3 Beneath_AU -j 4
+          ctest --test-dir build-ci -C Release --output-on-failure
+
+      - name: Package Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path package/Beneath -Force | Out-Null
+          Copy-Item -Recurse build-ci/Beneath_artefacts/Release/VST3/Beneath.vst3 package/Beneath/
+          Copy-Item build-ci/Beneath_artefacts/Release/Standalone/Beneath.exe package/Beneath/
+          Copy-Item README.md package/Beneath/
+          Compress-Archive -Path package/Beneath -DestinationPath "${{ matrix.archive }}"
+
+      - name: Package macOS
+        if: runner.os == 'macOS'
+        run: |
+          mkdir -p package/Beneath
+          ditto build-ci/Beneath_artefacts/Release/VST3/Beneath.vst3 package/Beneath/Beneath.vst3
+          ditto build-ci/Beneath_artefacts/Release/AU/Beneath.component package/Beneath/Beneath.component
+          ditto build-ci/Beneath_artefacts/Release/Standalone/Beneath.app package/Beneath/Beneath.app
+          cp README.md package/Beneath/
+          ditto -c -k --sequesterRsrc --keepParent package/Beneath "${{ matrix.archive }}"
+
+      - name: Upload packaged build
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.archive }}
+          path: ${{ matrix.archive }}
+          if-no-files-found: error
+
+  publish:
+    name: Publish GitHub release
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download packaged builds
+        uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Beneath 1.0.0
+          body: |
+            The first public release of Beneath by Monke Mountain Studios.
+
+            Drag the speaker and hydrophone through the aquarium, move the air stone, and combine Waves, Rain, Marine Life, Bubbles, current, depth, seabed material and Dream Physics. Beneath deliberately includes no factory presets: every source invites its own underwater route.
+
+            Move over the boat and drag the mast to raise the Jolly Roger feedback control. Its protected range tops out at 90%, where controlled mayhem still lives.
+
+            **Downloads**
+            - Windows x64: VST3 and standalone
+            - macOS universal (Apple Silicon and Intel): VST3, AU and standalone
+
+            macOS builds are unsigned and not notarized.
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          files: release-assets/**/*.zip
