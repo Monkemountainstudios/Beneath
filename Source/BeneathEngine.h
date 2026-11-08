@@ -65,6 +65,7 @@ public:
     [[nodiscard]] Geometry calculateGeometry (const Parameters&) const noexcept;
     [[nodiscard]] Motion getMotion() const noexcept;
     [[nodiscard]] static float waveCeilingForDepth (float normalizedDepth) noexcept;
+    [[nodiscard]] static float pirateLoopAmountForControl (float displayedAmount) noexcept;
 
 private:
     static constexpr int pathCount = 3;

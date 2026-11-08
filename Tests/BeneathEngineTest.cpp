@@ -19,6 +19,17 @@ bool finiteAndAudible (const juce::AudioBuffer<float>& buffer, double& energy)
 
 int main()
 {
+    const auto calmFlag = BeneathEngine::pirateLoopAmountForControl (0.85f);
+    const auto warningFlag = BeneathEngine::pirateLoopAmountForControl (0.875f);
+    const auto pazuzuFlag = BeneathEngine::pirateLoopAmountForControl (0.90f);
+    if (std::abs (calmFlag - 0.85f) > 0.0001f
+        || warningFlag <= 0.875f || warningFlag >= 1.0f
+        || std::abs (pazuzuFlag - 1.0f) > 0.0001f)
+    {
+        std::cerr << "pirate feedback chaos curve is outside its intended bounds\n";
+        return 16;
+    }
+
     const auto bottomCeiling = BeneathEngine::waveCeilingForDepth (1.0f);
     const auto oneCentimetreLift = BeneathEngine::waveCeilingForDepth (0.99f);
     const auto middleCeiling = BeneathEngine::waveCeilingForDepth (0.5f);

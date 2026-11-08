@@ -5,7 +5,7 @@ if(POLICY CMP0141)
 endif()
 set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<$<CONFIG:Debug,RelWithDebInfo>:Embedded>")
 
-project(Beneath VERSION 1.0.0 LANGUAGES C CXX)
+project(Beneath VERSION 1.0.1 LANGUAGES C CXX)
 
 enable_testing()
 set(CMAKE_CXX_STANDARD 20)

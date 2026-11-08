@@ -110,6 +110,16 @@ float BeneathEngine::waveCeilingForDepth (float normalizedDepth) noexcept
     return std::exp (juce::jmap (smooth, std::log (90.0f), std::log (12000.0f)));
 }
 
+float BeneathEngine::pirateLoopAmountForControl (float displayedAmount) noexcept
+{
+    // The flag truthfully stops at 90%, because the missing ten percent is where
+    // gravity becomes negotiable. The final five displayed points nevertheless
+    // bend back toward the original near-unity loop so full sail can self-oscillate.
+    const auto visible = juce::jlimit (0.0f, 0.9f, displayedAmount);
+    const auto chaos = juce::jlimit (0.0f, 1.0f, (visible - 0.85f) / 0.05f);
+    return visible + 0.10f * chaos * chaos;
+}
+
 BeneathEngine::Geometry BeneathEngine::calculateGeometry (const Parameters& p) const noexcept
 {
     Geometry g;
@@ -239,7 +249,7 @@ void BeneathEngine::process (const juce::AudioBuffer<float>& input,
                               geometry.pathMetres[0] / 90.0f));
     const auto hydrophoneWaveCeiling = waveCeilingForDepth (p.hydrophoneDepth);
     const auto phaseRate = juce::MathConstants<float>::twoPi / static_cast<float> (sampleRate);
-    const auto pirateAmount = juce::jlimit (0.0f, 1.0f, p.pirateFeedback);
+    const auto pirateAmount = pirateLoopAmountForControl (p.pirateFeedback);
     const auto pirateBlend = pirateAmount * pirateAmount * (3.0f - 2.0f * pirateAmount);
     const auto pirateLowCutCoefficient = 1.0f - std::exp (
         -juce::MathConstants<float>::twoPi * 110.0f / static_cast<float> (sampleRate));

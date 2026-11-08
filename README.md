@@ -13,7 +13,7 @@ Beneath is a playable underwater acoustic environment by **Monke Mountain Studio
 - Click **Waves**, **Rain**, **Marine** or **Bubbles** to enable that environment and open its controls. Click the aquarium to close the control row.
 - Use the side **Input** and **Output** faders for level, and **Mix** for the dry/wet balance.
 - Open **Settings** for water depth, rising seabed, current, Dream Physics, distance reverb, seabed material and environmental pause.
-- Move over the boat and drag its mast vertically to discover the Jolly Roger feedback control. Its protected 0–90% range moves from quiet reflections into controlled, near-self-sustaining chaos.
+- Move over the boat and drag its mast vertically to discover the Jolly Roger feedback control. Its protected 0–90% range moves from quiet reflections into controlled chaos, then bends sharply toward self-sustaining mayhem over the final five points. There is no remaining 10%: beyond that, gravity stops working and you may receive a visit from Pazuzu.
 
 Speaker and hydrophone position, distance, moving water and seabed material all affect the signal path. Extreme combinations are intentionally capable of becoming wild; lower the flag, Mix or Input if the sea starts winning.
 

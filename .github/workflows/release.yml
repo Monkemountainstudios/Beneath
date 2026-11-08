@@ -18,10 +18,10 @@ jobs:
         include:
           - os: windows-latest
             name: Windows x64
-            archive: Beneath-v1.0.0-Windows-x64.zip
+            suffix: Windows-x64
           - os: macos-latest
             name: macOS Universal
-            archive: Beneath-v1.0.0-macOS-universal.zip
+            suffix: macOS-universal
 
     runs-on: ${{ matrix.os }}
 
@@ -74,27 +74,29 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
+          $archive = "Beneath-${{ github.ref_name }}-${{ matrix.suffix }}.zip"
           New-Item -ItemType Directory -Path package/Beneath -Force | Out-Null
           Copy-Item -Recurse build-ci/Beneath_artefacts/Release/VST3/Beneath.vst3 package/Beneath/
           Copy-Item build-ci/Beneath_artefacts/Release/Standalone/Beneath.exe package/Beneath/
           Copy-Item README.md package/Beneath/
-          Compress-Archive -Path package/Beneath -DestinationPath "${{ matrix.archive }}"
+          Compress-Archive -Path package/Beneath -DestinationPath $archive
 
       - name: Package macOS
         if: runner.os == 'macOS'
         run: |
+          archive="Beneath-${{ github.ref_name }}-${{ matrix.suffix }}.zip"
           mkdir -p package/Beneath
           ditto build-ci/Beneath_artefacts/Release/VST3/Beneath.vst3 package/Beneath/Beneath.vst3
           ditto build-ci/Beneath_artefacts/Release/AU/Beneath.component package/Beneath/Beneath.component
           ditto build-ci/Beneath_artefacts/Release/Standalone/Beneath.app package/Beneath/Beneath.app
           cp README.md package/Beneath/
-          ditto -c -k --sequesterRsrc --keepParent package/Beneath "${{ matrix.archive }}"
+          ditto -c -k --sequesterRsrc --keepParent package/Beneath "$archive"
 
       - name: Upload packaged build
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.archive }}
-          path: ${{ matrix.archive }}
+          name: Beneath-${{ github.ref_name }}-${{ matrix.suffix }}.zip
+          path: Beneath-${{ github.ref_name }}-${{ matrix.suffix }}.zip
           if-no-files-found: error
 
   publish:
@@ -111,13 +113,13 @@ jobs:
       - name: Publish release
         uses: softprops/action-gh-release@v2
         with:
-          name: Beneath 1.0.0
+          name: Beneath ${{ github.ref_name }}
           body: |
             The first public release of Beneath by Monke Mountain Studios.
 
             Drag the speaker and hydrophone through the aquarium, move the air stone, and combine Waves, Rain, Marine Life, Bubbles, current, depth, seabed material and Dream Physics. Beneath deliberately includes no factory presets: every source invites its own underwater route.
 
-            Move over the boat and drag the mast to raise the Jolly Roger feedback control. Its protected range tops out at 90%, where controlled mayhem still lives.
+            Move over the boat and drag the mast to raise the Jolly Roger feedback control. Its visible range tops out at 90%, but the final five points bend toward self-sustaining mayhem. The missing ten percent is where gravity stops working and Pazuzu may visit.
 
             **Downloads**
             - Windows x64: VST3 and standalone

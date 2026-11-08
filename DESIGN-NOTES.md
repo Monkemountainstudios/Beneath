@@ -68,6 +68,8 @@ Preview 37 improves aquarium legibility by moving the Speaker and Hydrophone cap
 
 Preview 38 caps Pirate Feedback at 90%, retaining a deliberately wild upper edge without exposing the self-sustaining former endpoint. The mast interaction uses a much larger invisible target and a 96-pixel relative drag throw for precise adjustment while keeping the complete range reachable in one upward gesture; timer-based hover tracking makes flag discovery reliable across hosts. Beneath intentionally ships without named factory presets so each user develops settings around their own source material.
 
+Release 1.0.1 restores the noise-machine behaviour without changing the flag's ominous 90% ceiling. The control remains linear through 85%; its final five displayed points bend quadratically toward the original full loop amount, so maximum sail again reaches the self-sustaining endpoint. Direct and reflected input, waves, whales, rain, and bubbles all enter the return before its low cut, damping, saturation, and hard ceiling. The undocumented remaining ten percent is reserved for failures of gravity and possible visits from Pazuzu.
+
 Preview 37 moves the seabed material selector into a sixth Settings-column position directly below the Settings pill and above Mix. All numeric slider readouts now use an opaque light-casing plate with a subtle dark outline, keeping values legible over the printed logo and other artwork.
 
 Preview 38 moves Pause Environment out of the printed logo area and into the right-hand utility column, directly below the seabed selector and immediately above Mix.
